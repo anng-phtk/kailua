@@ -43,3 +43,20 @@ JOIN planning_items objective
 WHERE work_item.type = 'work_item'
   AND topic.type = 'topic'
   AND objective.type = 'objective';
+
+
+CREATE VIEW planning_item_elicitation_history AS
+SELECT
+    planning_items.id AS planning_item_id,
+    planning_items.type AS planning_item_type,
+    planning_items.title AS planning_item_title,
+    elicitation_answers.id AS elicitation_answer_id,
+    elicitation_answers.question,
+    elicitation_answers.paraphrased_question,
+    elicitation_answers.raw_answer,
+    elicitation_answers.normalized_field,
+    elicitation_answers.cleaned_answer,
+    elicitation_answers.confidence
+FROM planning_items
+JOIN elicitation_answers
+    ON elicitation_answers.planning_item_id = planning_items.id;
