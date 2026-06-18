@@ -1,0 +1,32 @@
+{
+    "name": "Software Project V0",
+    "description": "A minimal elicitation template for turning a vague software project idea into an Objective, Topic, and WorkItem.",
+    "version": "0.1.0",
+    "status": "draft",
+    "questions": [
+        {
+            "planning_item_type": "objective",
+            "question_order": 1,
+            "question": "What are you trying to build, and why does it matter?",
+            "paraphrased_question": "State the project objective and its purpose.",
+            "normalized_field": "intent_statement",
+            "help_text": "A good answer should help form a sentence like: As a user or builder, I can do something, so that a useful outcome is achieved."
+        },
+        {
+            "planning_item_type": "topic",
+            "question_order": 2,
+            "question": "What is one major area or topic of work needed to make this objective real?",
+            "paraphrased_question": "Identify one meaningful topic under the objective.",
+            "normalized_field": "title",
+            "help_text": "Examples: data model, UI, deployment, validation, planning workflow, execution boundary."
+        },
+        {
+            "planning_item_type": "work_item",
+            "question_order": 3,
+            "question": "What is one bounded work item inside that topic?",
+            "paraphrased_question": "Identify one concrete work item that contributes to the selected topic.",
+            "normalized_field": "title",
+            "help_text": "A good work item should be small enough to inspect, refine, and eventually generate one or more executables."
+        }
+    ]
+}
