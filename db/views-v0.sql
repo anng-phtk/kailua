@@ -60,3 +60,35 @@ SELECT
 FROM planning_items
 JOIN elicitation_answers
     ON elicitation_answers.planning_item_id = planning_items.id;
+
+    CREATE VIEW work_item_context_packet_v0 AS
+SELECT
+    context.work_item_id,
+    context.work_item_title,
+    context.work_item_intent_statement,
+    context.work_item_description,
+    context.work_item_status,
+
+    context.topic_id,
+    context.topic_title,
+    context.topic_intent_statement,
+    context.topic_description,
+    context.topic_area,
+    context.topic_status,
+
+    context.objective_id,
+    context.objective_title,
+    context.objective_intent_statement,
+    context.objective_description,
+    context.objective_status,
+
+    history.elicitation_answer_id,
+    history.question,
+    history.paraphrased_question,
+    history.raw_answer,
+    history.normalized_field,
+    history.cleaned_answer,
+    history.confidence
+FROM work_item_context context
+LEFT JOIN planning_item_elicitation_history history
+    ON history.planning_item_id = context.work_item_id;
