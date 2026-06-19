@@ -9,6 +9,17 @@ export interface WorkItemContextPacketRow {
     cleaned_answer: string | null;
 }
 
+export interface AddElicitationAnswerInput {
+    planningItemId: number;
+    templateQuestionId?: number | null;
+    question: string;
+    paraphrasedQuestion?: string;
+    rawAnswer?: string;
+    normalizedField?: string;
+    cleanedAnswer?: string;
+    confidence?: number;
+}
+
 export class KailuaStore {
     private readonly db: Database.Database;
 
@@ -45,6 +56,38 @@ export class KailuaStore {
             )
             .all(workItemId) as WorkItemContextPacketRow[];
     }
+
+    addElicitationAnswer(input: AddElicitationAnswerInput): number {
+        const result = this.db
+            .prepare(
+                `
+      INSERT INTO elicitation_answers (
+        planning_item_id,
+        template_question_id,
+        question,
+        paraphrased_question,
+        raw_answer,
+        normalized_field,
+        cleaned_answer,
+        confidence
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `
+            )
+            .run(
+                input.planningItemId,
+                input.templateQuestionId ?? null,
+                input.question,
+                input.paraphrasedQuestion ?? "",
+                input.rawAnswer ?? "",
+                input.normalizedField ?? "",
+                input.cleanedAnswer ?? "",
+                input.confidence ?? 0.0
+            );
+
+        return Number(result.lastInsertRowid);
+    }
+
 
     close(): void {
         this.db.close();

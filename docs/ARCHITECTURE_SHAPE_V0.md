@@ -16,6 +16,11 @@ Kailua is not only an Electron app. The UI may be Electron, browser-based, or bo
 ## Core Engine Layer
 
 ## Persistence Layer
+V0 does not use an ORM.
+
+Kailua uses explicit SQL files, SQLite views, and a thin TypeScript store layer. The store exposes named methods such as `getWorkItemContextPacket(workItemId)` and hides the SQLite library from the rest of the application.
+
+This keeps the data model inspectable and supports the Island Test. An ORM should only be considered later if repeated SQL or migration pain appears at least three times.
 
 ## Model Gateway Layer
 
