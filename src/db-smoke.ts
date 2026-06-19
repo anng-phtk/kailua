@@ -2,6 +2,10 @@ import { KailuaStore } from "./db/kailua-store.js";
 
 const store = KailuaStore.openInMemoryWithV0SeedData();
 
+console.log("Planning item tree");
+console.table(store.getPlanningItemTree());
+
+
 store.addElicitationAnswer({
     planningItemId: 3,
     question: "What proves this work item is done?",
@@ -11,8 +15,9 @@ store.addElicitationAnswer({
     confidence: 0.9,
 });
 
-const rows = store.getWorkItemContextPacket(3);
 
+console.log("Selected WorkItem context packet");
+const rows = store.getWorkItemContextPacket(3);
 console.table(rows);
 
 store.close();

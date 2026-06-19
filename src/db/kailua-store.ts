@@ -19,7 +19,19 @@ export interface AddElicitationAnswerInput {
     cleanedAnswer?: string;
     confidence?: number;
 }
-
+export interface PlanningItemTreeRow {
+    id: number;
+    parent_planning_item_id: number | null;
+    type: "objective" | "topic" | "work_item";
+    title: string;
+    intent_statement: string;
+    description: string;
+    area: string;
+    status: "draft" | "ready" | "active" | "blocked" | "completed" | "abandoned";
+    parent_id: number | null;
+    parent_type: "objective" | "topic" | "work_item" | null;
+    parent_title: string | null;
+}
 export class KailuaStore {
     private readonly db: Database.Database;
 
@@ -39,6 +51,29 @@ export class KailuaStore {
         return store;
     }
 
+
+    getPlanningItemTree(): PlanningItemTreeRow[] {
+        return this.db
+            .prepare(
+                `
+      SELECT
+        id,
+        parent_planning_item_id,
+        type,
+        title,
+        intent_statement,
+        description,
+        area,
+        status,
+        parent_id,
+        parent_type,
+        parent_title
+      FROM planning_item_tree
+      ORDER BY id
+      `
+            )
+            .all() as PlanningItemTreeRow[];
+    }
     getWorkItemContextPacket(workItemId: number): WorkItemContextPacketRow[] {
         return this.db
             .prepare(
