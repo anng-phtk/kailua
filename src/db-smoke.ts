@@ -1,27 +1,9 @@
-import Database from "better-sqlite3";
-import { readFileSync } from "node:fs";
+import { KailuaStore } from "./db/kailua-store.js";
 
-const db = new Database(":memory:");
+const store = KailuaStore.openInMemoryWithV0SeedData();
 
-db.exec(readFileSync("db/schema-v0.sql", "utf8"));
-db.exec(readFileSync("db/views-v0.sql", "utf8"));
-db.exec(readFileSync("db/seeds/software_project_v0.sql", "utf8"));
-db.exec(readFileSync("db/seeds/sample_kailua_journey.sql", "utf8"));
-
-const rows = db
-    .prepare(
-        `
-    SELECT
-      work_item_title,
-      topic_title,
-      objective_title,
-      normalized_field,
-      cleaned_answer
-    FROM work_item_context_packet_v0
-    ORDER BY work_item_id
-    `
-    )
-    .all();
+const rows = store.getWorkItemContextPackets();
 
 console.table(rows);
-db.close();
+
+store.close();
