@@ -25,6 +25,9 @@ const workItemId = store.addPlanningItem({
 
 console.log(`Successfully added items: Objective (${objId}), Topic (${topicId}), WorkItem (${workItemId})`);
 
+store.updatePlanningItemStatus(workItemId, "active");
+store.updatePlanningItemStatus(workItemId, "completed");
+
 // 2. Test validation failure (Hierarchy Law violation)
 console.log("\nTesting hierarchy violation validation...");
 try {

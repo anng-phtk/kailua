@@ -174,6 +174,21 @@ export class KailuaStore {
         return Number(result.lastInsertRowid);
     }
 
+    updatePlanningItemStatus(id: number, status: PlanningItemStatus): void {
+        const result = this.db
+            .prepare(
+                `
+            UPDATE planning_items
+            SET status = ?
+            WHERE id = ?
+            `
+            )
+            .run(status, id);
+
+        if (result.changes === 0) {
+            throw new Error(`PlanningItem ${id} does not exist.`);
+        }
+    }
 
     close(): void {
         this.db.close();
