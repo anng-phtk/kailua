@@ -118,3 +118,21 @@ A reusable elicitation script for a domain or workflow. A Template defines what 
 ## TemplateQuestion
 
 A question belonging to a Template. It defines the prompt, intended normalized field, ordering, and the PlanningItem type it helps clarify.
+
+# V0 SQL Artifacts
+
+## db/schema-v0.sql
+
+Creates the core tables and hierarchy validation triggers.
+
+## db/views-v0.sql
+
+Creates read views for tree display, selected WorkItem context, elicitation history, and the first WorkItem context packet.
+
+## db/seeds/software_project_v0.sql
+
+Seeds the minimal software project elicitation template.
+
+## db/seeds/sample_kailua_journey.sql
+
+Seeds a small Kailua planning journey used to validate the PlanningItem tree and ElicitationAnswer discovery history.
