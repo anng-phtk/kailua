@@ -1,0 +1,34 @@
+{
+    "name": "kailua",
+    "version": "1.0.0",
+    "description": "We refuse to trade comprehension for raw throughput. Kailua is built for developers who want to scale their engineering velocity while sharpening their personal technical fitness. We use the tool to amplify the mind, never to replace it.",
+    "main": "index.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "dependencies": {
+        "better-sqlite3": "^12.11.1"
+    },
+    "scripts": {
+        "db:smoke": "tsx src/db-smoke.ts",
+        "test": "npm run db:smoke"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/anng-phtk/kailua.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "bugs": {
+        "url": "https://github.com/anng-phtk/kailua/issues"
+    },
+    "homepage": "https://github.com/anng-phtk/kailua#readme",
+    "devDependencies": {
+        "@types/better-sqlite3": "^7.6.13",
+        "@types/node": "^25.9.3",
+        "tsx": "^4.22.4",
+        "typescript": "^6.0.3"
+    }
+}
