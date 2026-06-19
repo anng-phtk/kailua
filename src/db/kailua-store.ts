@@ -19,6 +19,17 @@ export interface AddElicitationAnswerInput {
     cleanedAnswer?: string;
     confidence?: number;
 }
+
+export type PlanningItemType = "objective" | "topic" | "work_item";
+
+export type PlanningItemStatus =
+    | "draft"
+    | "ready"
+    | "active"
+    | "blocked"
+    | "completed"
+    | "abandoned";
+
 export interface PlanningItemTreeRow {
     id: number;
     parent_planning_item_id: number | null;
@@ -32,6 +43,17 @@ export interface PlanningItemTreeRow {
     parent_type: "objective" | "topic" | "work_item" | null;
     parent_title: string | null;
 }
+
+export interface AddPlanningItemInput {
+    type: PlanningItemType;
+    parentPlanningItemId?: number | null;
+    title: string;
+    intentStatement?: string;
+    description?: string;
+    area?: string;
+    status?: PlanningItemStatus;
+}
+
 export class KailuaStore {
     private readonly db: Database.Database;
 
@@ -51,7 +73,36 @@ export class KailuaStore {
         return store;
     }
 
+    addPlanningItem(input: AddPlanningItemInput): number {
+        this.validatePlanningItemHierarchy(input.type, input.parentPlanningItemId ?? null);
 
+        const result = this.db
+            .prepare(
+                `
+            INSERT INTO planning_items (
+                parent_planning_item_id,
+                type,
+                title,
+                intent_statement,
+                description,
+                area,
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            `
+            )
+            .run(
+                input.parentPlanningItemId ?? null,
+                input.type,
+                input.title,
+                input.intentStatement ?? "",
+                input.description ?? "",
+                input.area ?? "",
+                input.status ?? "draft"
+            );
+
+        return Number(result.lastInsertRowid);
+    }
     getPlanningItemTree(): PlanningItemTreeRow[] {
         return this.db
             .prepare(
@@ -128,6 +179,44 @@ export class KailuaStore {
         this.db.close();
     }
 
+    private validatePlanningItemHierarchy(
+        type: PlanningItemType,
+        parentPlanningItemId: number | null
+    ): void {
+        if (type === "objective") {
+            if (parentPlanningItemId !== null) {
+                throw new Error("Objective must not have a parent PlanningItem.");
+            }
+
+            return;
+        }
+
+        if (parentPlanningItemId === null) {
+            throw new Error(`${type} must have a parent PlanningItem.`);
+        }
+
+        const parent = this.db
+            .prepare(
+                `
+            SELECT type
+            FROM planning_items
+            WHERE id = ?
+            `
+            )
+            .get(parentPlanningItemId) as { type: PlanningItemType } | undefined;
+
+        if (!parent) {
+            throw new Error(`Parent PlanningItem ${parentPlanningItemId} does not exist.`);
+        }
+
+        if (type === "topic" && parent.type !== "objective") {
+            throw new Error("Topic parent must be Objective.");
+        }
+
+        if (type === "work_item" && parent.type !== "topic") {
+            throw new Error("WorkItem parent must be Topic.");
+        }
+    }
     private execFile(path: string): void {
         this.db.exec(readFileSync(path, "utf8"));
     }
