@@ -28,7 +28,7 @@ export class KailuaStore {
         return store;
     }
 
-    getWorkItemContextPackets(): WorkItemContextPacketRow[] {
+    getWorkItemContextPacket(workItemId: number): WorkItemContextPacketRow[] {
         return this.db
             .prepare(
                 `
@@ -39,10 +39,11 @@ export class KailuaStore {
           normalized_field,
           cleaned_answer
         FROM work_item_context_packet_v0
-        ORDER BY work_item_id
+        WHERE work_item_id = ?
+        ORDER BY elicitation_answer_id
         `
             )
-            .all() as WorkItemContextPacketRow[];
+            .all(workItemId) as WorkItemContextPacketRow[];
     }
 
     close(): void {
