@@ -63,6 +63,7 @@ export class KailuaStore {
 
     static openInMemoryWithV0SeedData(): KailuaStore {
         const db = new Database(":memory:");
+        db.pragma("foreign_keys = ON");
         const store = new KailuaStore(db);
 
         store.execFile("db/schema-v0.sql");
@@ -72,6 +73,25 @@ export class KailuaStore {
 
         return store;
     }
+
+    static openFile(path: string): KailuaStore {
+        const db = new Database(path);
+        db.pragma("foreign_keys = ON");
+
+        const store = new KailuaStore(db);
+
+        const tableExists = db
+            .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'planning_items'")
+            .get();
+
+        if (!tableExists) {
+            store.execFile("db/schema-v0.sql");
+            store.execFile("db/views-v0.sql");
+        }
+
+        return store;
+    }
+
 
     addPlanningItem(input: AddPlanningItemInput): number {
         this.validatePlanningItemHierarchy(input.type, input.parentPlanningItemId ?? null);

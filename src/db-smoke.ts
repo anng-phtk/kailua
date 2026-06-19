@@ -1,4 +1,27 @@
+/**
+ * Smoke test for KailuaStore to verify basic functionality and file persistence.
+ * Desired Shape:
+import fs helpers
+import KailuaStore
+
+run in-memory smoke
+close in-memory store
+
+- delete old test-smoke.db if it exists
+- open file DB
+- write row
+- close
+
+- open same file DB again
+- verify row persists
+- close
+
+- delete test-smoke.db
+ */
+
 import { KailuaStore } from "./db/kailua-store.js";
+import { unlinkSync, existsSync } from "node:fs";
+
 // open seeded DB
 const store = KailuaStore.openInMemoryWithV0SeedData();
 
@@ -64,3 +87,40 @@ const rows = store.getWorkItemContextPacket(3);
 console.table(rows);
 
 store.close();
+
+// 3. Test persistent file-backed database
+console.log("\nTesting file-backed database persistence...");
+const dbPath = "test-smoke.db";
+
+// Ensure clean state
+if (existsSync(dbPath)) {
+    unlinkSync(dbPath);
+}
+
+try {
+    // Open for first time (initializes schema)
+    const fileStore1 = KailuaStore.openFile(dbPath);
+    fileStore1.addPlanningItem({
+        type: "objective",
+        title: "Verify File Persistence",
+        description: "Checking if we can persist and restore items.",
+    });
+    fileStore1.close();
+
+    // Open for second time (should NOT crash and should preserve table structures & data)
+    const fileStore2 = KailuaStore.openFile(dbPath);
+    const tree = fileStore2.getPlanningItemTree();
+    const found = tree.some(item => item.title === "Verify File Persistence");
+    fileStore2.close();
+
+    if (found) {
+        console.log("Success: File-backed database successfully persisted data across sessions.");
+    } else {
+        console.error("ERROR: Data was not found on second database initialization.");
+    }
+} finally {
+    // Clean up file
+    if (existsSync(dbPath)) {
+        unlinkSync(dbPath);
+    }
+}
