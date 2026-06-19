@@ -210,6 +210,19 @@ export class KailuaStore {
         }
     }
 
+    getElicitationHistory(planningItemId: number): Array<{ question: string; answer: string }> {
+        return this.db
+            .prepare(
+                `
+                SELECT question, raw_answer AS answer
+                FROM elicitation_answers
+                WHERE planning_item_id = ?
+                ORDER BY id
+                `
+            )
+            .all(planningItemId) as Array<{ question: string; answer: string }>;
+    }
+
     close(): void {
         this.db.close();
     }
