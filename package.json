@@ -10,9 +10,10 @@
         "better-sqlite3": "^12.11.1"
     },
     "scripts": {
-        "db:smoke": "tsx src/db-smoke.ts",
+        "db:smoke": "npx tsx src/db-smoke.ts",
         "test": "npm run db:smoke",
-        "typecheck": "tsc -p tsconfig.json"
+        "typecheck": "tsc -p tsconfig.json",
+        "elicitor:smoke": "npx tsx src/elicitor-smoke.ts"
     },
     "repository": {
         "type": "git",
