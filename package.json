@@ -11,7 +11,8 @@
     },
     "scripts": {
         "db:smoke": "tsx src/db-smoke.ts",
-        "test": "npm run db:smoke"
+        "test": "npm run db:smoke",
+        "typecheck": "tsc -p tsconfig.json"
     },
     "repository": {
         "type": "git",
